@@ -3,9 +3,10 @@
 from distutils.core import setup
 
 setup(name='MFRC522',
-    version='0.0.1',
+    version='0.0.2',
     description='Raspberry Pi Python library for SPI RFID RC522 module.',
-    install_requires=['spidev', 'RPi.GPIO'],
+    install_requires=['https://github.com/lthiery/SPI-Py/archive/master.zip',
+                      'RPi.GPIO'],
     packages=['MFRC522'],
     classifiers=[
         "Programming Language :: Python :: 3",
