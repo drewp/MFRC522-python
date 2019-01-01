@@ -144,11 +144,12 @@ class MFRC522:
     self.MFRC522_Init()
 
   def Write_MFRC522(self, addr, val):
-    self.spi.transfer(((addr << 1) & 0x7E, val))
+    self.spi.xfer2([(addr << 1) & 0x7E, val])
 
   def Read_MFRC522(self, addr):
-    val = self.spi.transfer((((addr << 1) & 0x7E) | 0x80, 0))
-    return val[1]
+    out_buf = [((addr << 1) & 0x7E) | 0x80, 0]
+    return_buf = self.spi.xfer2(out_buf)
+    return return_buf[1]
 
   def SetBitMask(self, reg, mask):
     tmp = self.Read_MFRC522(reg)
