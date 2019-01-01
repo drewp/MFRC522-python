@@ -4,7 +4,7 @@
 # Also changed to use the Broadcom pin mode
 
 import RPi.GPIO as GPIO
-import spi
+import spidev
 import signal
 import time
 import threading
@@ -112,8 +112,10 @@ class MFRC522:
 
   irq = threading.Event()
 
-  def __init__(self, dev='/dev/spidev0.0', spd=1000000):
-    spi.openSPI(device=dev,speed=spd)
+  def __init__(self, bus=0, device=0, spd=1000000):
+    self.spi = spidev.SpiDev()
+    self.spi.open(bus, device)
+    self.spi.max_speed_hz = spd
     GPIO.setmode(GPIO.BCM)
     GPIO.setup(25, GPIO.OUT)
     GPIO.output(self.NRSTPD, 1)
@@ -142,10 +144,10 @@ class MFRC522:
     self.MFRC522_Init()
 
   def Write_MFRC522(self, addr, val):
-    spi.transfer(((addr<<1)&0x7E,val))
+    self.spi.transfer(((addr << 1) & 0x7E, val))
 
   def Read_MFRC522(self, addr):
-    val = spi.transfer((((addr<<1)&0x7E) | 0x80,0))
+    val = self.spi.transfer((((addr << 1) & 0x7E) | 0x80, 0))
     return val[1]
 
   def SetBitMask(self, reg, mask):
