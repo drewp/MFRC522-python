@@ -112,7 +112,8 @@ class MFRC522:
 
   irq = threading.Event()
 
-  def __init__(self, bus=0, device=0, spd=1000000):
+  def __init__(self, bus=0, device=0, spd=1000000, gain=0x04):
+    self.gain = gain
     self.spi = spidev.SpiDev()
     self.spi.open(bus, device)
     self.spi.max_speed_hz = spd
@@ -159,7 +160,11 @@ class MFRC522:
     tmp = self.Read_MFRC522(reg);
     self.Write_MFRC522(reg, tmp & (~mask))
 
-  def AntennaOn(self):
+  def AntennaOn(self, gain=0x04):
+    cfg = self.Read_MFRC522(self.RFCfgReg)
+    cfg = cfg | (gain << 4)
+    self.Write_MFRC522(self.RFCfgReg, cfg)
+
     temp = self.Read_MFRC522(self.TxControlReg)
     if(~(temp & 0x03)):
       self.SetBitMask(self.TxControlReg, 0x03)
@@ -422,4 +427,4 @@ class MFRC522:
 
     self.Write_MFRC522(self.TxAutoReg, 0x40)
     self.Write_MFRC522(self.ModeReg, 0x3D)
-    self.AntennaOn()
+    self.AntennaOn(self.gain)

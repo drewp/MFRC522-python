@@ -10,8 +10,8 @@ class SimpleMFRC522:
     KEY = [0xFF,0xFF,0xFF,0xFF,0xFF,0xFF]
     BLOCK_ADDRS = [8, 9, 10]
 
-    def __init__(self):
-        self.READER = MFRC522.MFRC522()
+    def __init__(self, gain=0x04):
+        self.READER = MFRC522.MFRC522(gain=gain)
 
     def wait_for_tag(self):
         self.READER.Wait_For_Tag()
